@@ -19,6 +19,7 @@ nv.models.pie = function() {
     , labelThreshold = .02 //if slice percentage is under this, don't show label
     , donut = false
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
+    , percentFormat = d3.format('%')
     ;
 
   //============================================================
@@ -63,7 +64,7 @@ nv.models.pie = function() {
       var arc = d3.svg.arc()
                   .outerRadius((radius-(radius / 5)));
 
-      if (donut) arc.innerRadius(radius / 2);
+      if (donut) arc.innerRadius(radius / 5);
 
 
       // Setup the Pie chart and choose the data element
@@ -160,7 +161,6 @@ nv.models.pie = function() {
 
               group.append('text')
                   .style('text-anchor', 'middle') //center the text on it's origin
-                  .style('fill', '#000')
 
 
           });
@@ -179,7 +179,7 @@ nv.models.pie = function() {
               .select(".nv-label text")
                 .text(function(d, i) {
                   var percent = (d.endAngle - d.startAngle) / (2 * Math.PI);
-                  return (d.value && percent > labelThreshold) ? getX(d.data) : '';
+                  return (d.value && percent > labelThreshold) ? getX(d.data) + ' ' + percentFormat(percent) : '';
                 });
 
             var textBox = slice.select('text').node().getBBox();
