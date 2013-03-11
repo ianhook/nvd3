@@ -7763,7 +7763,7 @@ nv.models.multiBarRightLegendChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate(' + availableWidth + ',' + ((availableHeight - legend.height() - margin.top - margin.bottom) / 2) +')');
+            .attr('transform', 'translate(' + availableWidth + ',' + ((availableHeight - legend.height()) / 2) +')');
       }
 
       //------------------------------------------------------------
@@ -13408,7 +13408,7 @@ nv.models.stackedAreaRightLegendChart = function() {
           }
 
           g.select('.nv-legendWrap')
-              .attr('transform', 'translate(' + availableWidth + ',' + ((availableHeight - legend.height() - margin.top - margin.bottom) / 2) +')');
+              .attr('transform', 'translate(' + availableWidth + ',' + ((availableHeight - legend.height()) / 2) +')');
       }
 
       //------------------------------------------------------------
