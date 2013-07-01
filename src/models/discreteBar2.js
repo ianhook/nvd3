@@ -21,6 +21,7 @@ nv.models.discreteBar2 = function() {
     , yDomain
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     , rectClass = 'discreteBar'
+    , max
     ;
 
   //============================================================
@@ -177,7 +178,8 @@ nv.models.discreteBar2 = function() {
           .attr('width', x.rangeBand() * .9 / data.length )
 
       if (showValues) {
-        var max = d3.sum(data[0].values,getY);
+        if (!max)
+            max = d3.sum(data[0].values,getY);
         barsEnter.append('text')
           .attr('text-anchor', 'middle')
         bars.select('text')
@@ -319,6 +321,12 @@ nv.models.discreteBar2 = function() {
   chart.rectClass= function(_) {
     if (!arguments.length) return rectClass;
     rectClass = _;
+    return chart;
+  }
+
+  chart.max= function(_) {
+    if (!arguments.length) return max;
+    max = _;
     return chart;
   }
   //============================================================

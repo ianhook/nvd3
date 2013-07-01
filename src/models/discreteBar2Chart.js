@@ -24,6 +24,7 @@ nv.models.discreteBar2Chart = function() {
     , y
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'beforeUpdate')
+    , max
     ;
 
   xAxis
@@ -128,6 +129,9 @@ nv.models.discreteBar2Chart = function() {
       discretebar
         .width(availableWidth)
         .height(availableHeight);
+
+      if(max)
+        discretebar.max(max);
 
 
       var barsWrap = g.select('.nv-barsWrap')
@@ -283,6 +287,11 @@ nv.models.discreteBar2Chart = function() {
     return chart;
   };
 
+  chart.max= function(_) {
+    if (!arguments.length) return max;
+    max = _;
+    return chart;
+  }
   //============================================================
 
 
