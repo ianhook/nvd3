@@ -1,22 +1,22 @@
 
-nv.models.lineChart = function() {
+nv.models.historicalBarChart = function() {
 
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var lines = nv.models.line()
+  var bars = nv.models.historicalBar()
     , xAxis = nv.models.axis()
     , yAxis = nv.models.axis()
     , legend = nv.models.legend()
     ;
 
-//set margin.right to 23 to fit dates on the x-axis within the chart
-  var margin = {top: 30, right: 30, bottom: 50, left: 50}
+
+  var margin = {top: 30, right: 90, bottom: 50, left: 90}
     , color = nv.utils.defaultColor()
     , width = null
     , height = null
-    , showLegend = true
+    , showLegend = false
     , showXAxis = true
     , showYAxis = true
     , rightAlignYAxis = false
@@ -38,7 +38,7 @@ nv.models.lineChart = function() {
     .tickPadding(7)
     ;
   yAxis
-    .orient((rightAlignYAxis) ? 'right' : 'left')
+    .orient( (rightAlignYAxis) ? 'right' : 'left')
     ;
 
   //============================================================
@@ -64,8 +64,8 @@ nv.models.lineChart = function() {
 
     var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
         top = e.pos[1] + ( offsetElement.offsetTop || 0),
-        x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex)),
+        x = xAxis.tickFormat()(bars.x()(e.point, e.pointIndex)),
+        y = yAxis.tickFormat()(bars.y()(e.point, e.pointIndex)),
         content = tooltip(e.series.key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, null, null, offsetElement);
@@ -85,7 +85,7 @@ nv.models.lineChart = function() {
                              - margin.top - margin.bottom;
 
 
-      chart.update = function() { container.transition().call(chart) };
+      chart.update = function() { chart(selection) };
       chart.container = this;
 
       //set state.disabled
@@ -129,8 +129,8 @@ nv.models.lineChart = function() {
       //------------------------------------------------------------
       // Setup Scales
 
-      x = lines.xScale();
-      y = lines.yScale();
+      x = bars.xScale();
+      y = bars.yScale();
 
       //------------------------------------------------------------
 
@@ -144,7 +144,7 @@ nv.models.lineChart = function() {
 
       gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
-      gEnter.append('g').attr('class', 'nv-linesWrap');
+      gEnter.append('g').attr('class', 'nv-barsWrap');
       gEnter.append('g').attr('class', 'nv-legendWrap');
 
       //------------------------------------------------------------
@@ -175,14 +175,15 @@ nv.models.lineChart = function() {
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
       if (rightAlignYAxis) {
-          g.select(".nv-y.nv-axis")
-              .attr("transform", "translate(" + availableWidth + ",0)");
+        g.select(".nv-y.nv-axis")
+            .attr("transform", "translate(" + availableWidth + ",0)");
       }
+
 
       //------------------------------------------------------------
       // Main Chart Component(s)
 
-      lines
+      bars
         .width(availableWidth)
         .height(availableHeight)
         .color(data.map(function(d,i) {
@@ -190,10 +191,10 @@ nv.models.lineChart = function() {
         }).filter(function(d,i) { return !data[i].disabled }));
 
 
-      var linesWrap = g.select('.nv-linesWrap')
+      var barsWrap = g.select('.nv-barsWrap')
           .datum(data.filter(function(d) { return !d.disabled }))
 
-      d3.transition(linesWrap).call(lines);
+      d3.transition(barsWrap).call(bars);
 
       //------------------------------------------------------------
 
@@ -204,12 +205,12 @@ nv.models.lineChart = function() {
       if (showXAxis) {
         xAxis
           .scale(x)
-          .ticks( availableWidth / 100 )
           .tickSize(-availableHeight, 0);
 
         g.select('.nv-x.nv-axis')
             .attr('transform', 'translate(0,' + y.range()[0] + ')');
-        d3.transition(g.select('.nv-x.nv-axis'))
+        g.select('.nv-x.nv-axis')
+          .transition()
             .call(xAxis);
       }
 
@@ -219,7 +220,8 @@ nv.models.lineChart = function() {
           .ticks( availableHeight / 36 )
           .tickSize( -availableWidth, 0);
 
-        d3.transition(g.select('.nv-y.nv-axis'))
+        g.select('.nv-y.nv-axis')
+          .transition().duration(0)
             .call(yAxis);
       }
       //------------------------------------------------------------
@@ -243,8 +245,7 @@ nv.models.lineChart = function() {
         state.disabled = data.map(function(d) { return !!d.disabled });
         dispatch.stateChange(state);
 
-        // container.transition().call(chart);
-        chart.update();
+        selection.transition().call(chart);
       });
 
       legend.dispatch.on('legendDblclick', function(d) {
@@ -258,7 +259,6 @@ nv.models.lineChart = function() {
           dispatch.stateChange(state);
           chart.update();
       });
-
 
 /*
       legend.dispatch.on('legendMouseover', function(d, i) {
@@ -287,7 +287,7 @@ nv.models.lineChart = function() {
           state.disabled = e.disabled;
         }
 
-        chart.update();
+        selection.call(chart);
       });
 
       //============================================================
@@ -302,12 +302,12 @@ nv.models.lineChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  lines.dispatch.on('elementMouseover.tooltip', function(e) {
+  bars.dispatch.on('elementMouseover.tooltip', function(e) {
     e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
   });
 
-  lines.dispatch.on('elementMouseout.tooltip', function(e) {
+  bars.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
 
@@ -324,12 +324,12 @@ nv.models.lineChart = function() {
 
   // expose chart's sub-components
   chart.dispatch = dispatch;
-  chart.lines = lines;
+  chart.bars = bars;
   chart.legend = legend;
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, lines, 'defined', 'isArea', 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'interactive', 'clipEdge', 'clipVoronoi', 'id', 'interpolate');
+  d3.rebind(chart, bars, 'defined', 'isArea', 'x', 'y', 'size', 'xScale', 'yScale', 'xDomain', 'yDomain', 'forceX', 'forceY', 'interactive', 'clipEdge', 'clipVoronoi', 'id', 'interpolate');
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
