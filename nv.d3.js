@@ -11490,12 +11490,12 @@ nv.models.multiChart = function() {
       gEnter.append('g').attr('class', 'x axis');
       gEnter.append('g').attr('class', 'y1 axis');
       gEnter.append('g').attr('class', 'y2 axis');
-      gEnter.append('g').attr('class', 'lines1Wrap');
-      gEnter.append('g').attr('class', 'lines2Wrap');
-      gEnter.append('g').attr('class', 'bars1Wrap');
-      gEnter.append('g').attr('class', 'bars2Wrap');
       gEnter.append('g').attr('class', 'stack1Wrap');
       gEnter.append('g').attr('class', 'stack2Wrap');
+      gEnter.append('g').attr('class', 'bars1Wrap');
+      gEnter.append('g').attr('class', 'bars2Wrap');
+      gEnter.append('g').attr('class', 'lines1Wrap');
+      gEnter.append('g').attr('class', 'lines2Wrap');
       gEnter.append('g').attr('class', 'legendWrap');
 
       var g = wrap.select('g');
