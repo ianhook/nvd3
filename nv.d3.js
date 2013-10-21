@@ -11553,6 +11553,7 @@ nv.models.multiChart = function() {
         }).filter(function(d,i) { return !data[i].disabled && data[i].yAxis == 2 && data[i].type == 'bar'}));
 
       stack1
+        .clipEdge(true)
         .width(availableWidth)
         .height(availableHeight)
         .color(data.map(function(d,i) {
@@ -11560,6 +11561,7 @@ nv.models.multiChart = function() {
         }).filter(function(d,i) { return !data[i].disabled && data[i].yAxis == 1 && data[i].type == 'area'}));
 
       stack2
+        .clipEdge(true)
         .width(availableWidth)
         .height(availableHeight)
         .color(data.map(function(d,i) {
